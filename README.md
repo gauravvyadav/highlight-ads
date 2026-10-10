@@ -68,9 +68,10 @@ network request is the periodic download of the public EasyList text file.
 
 ## Third-party licenses
 
-- EasyList filter data is fetched at runtime from
-  [easylist.to](https://easylist.to) and is **not** bundled with this
-  extension. EasyList is licensed under the GPLv3; see the
+- EasyList filter data ships as a snapshot (`public/lists/easylist.txt`,
+  updated manually) and refreshes itself at runtime from
+  [easylist.to](https://easylist.to). EasyList is licensed under the GPLv3;
+  see `public/lists/ATTRIBUTION.txt` and the
   [easylist repository](https://github.com/easylist/easylist) for details.
 - This extension bundles [@cliqz/adblocker](https://github.com/ghostery/adblocker)
   (Mozilla Public License 2.0) to match filter rules locally.

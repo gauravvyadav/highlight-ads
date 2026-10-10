@@ -237,6 +237,23 @@ function ensureEngine(): Promise<void> {
 }
 
 async function loadEngine(): Promise<void> {
+  // 1. Bundled snapshot first — full engine even offline or first run.
+  let activeAt = 0;
+  try {
+    const res = await fetch(chrome.runtime.getURL('lists/easylist.txt'));
+    if (res.ok) {
+      const text = await res.text();
+      if (validateListText(text).ok) {
+        const at = bundledDate(text) ?? 0;
+        await setEngine(text, new Date(at || Date.now()).toISOString());
+        activeAt = at;
+      }
+    }
+  } catch {
+    // No bundled file — fall through to cache/network below.
+  }
+
+  // 2. Storage cache wins if newer than the bundle.
   let cached: CachedList | null = null;
   try {
     const raw = await chrome.storage.local.get(EASYLIST_CACHE_KEY);
@@ -247,9 +264,11 @@ async function loadEngine(): Promise<void> {
 
   if (cached?.text) {
     const verdict = validateListText(cached.text);
-    if (verdict.ok) {
+    const cachedAt = Date.parse(cached.fetchedAt);
+    if (verdict.ok && cachedAt > activeAt) {
       await setEngine(cached.text, cached.fetchedAt);
-    } else {
+      activeAt = cachedAt;
+    } else if (!verdict.ok) {
       // Drop invalid cached payloads.
       cached = null;
       try {
@@ -259,10 +278,18 @@ async function loadEngine(): Promise<void> {
       }
     }
   }
-  if (!cached?.text || isStale(cached.fetchedAt)) {
-    // Refresh in the background while serving the cached engine.
+  if (activeAt === 0 || isStale(new Date(activeAt).toISOString())) {
+    // Refresh in the background while serving the current engine.
     void refreshList().catch(() => {});
   }
+}
+
+// Read the list's own date from its "! Last modified:" header.
+function bundledDate(text: string): number {
+  const m = text.match(/^! Last modified:\s*(.+)$/m);
+  if (!m) return 0;
+  const t = Date.parse((m[1] ?? '').trim());
+  return Number.isNaN(t) ? 0 : t;
 }
 
 async function setEngine(text: string, fetchedAt: string): Promise<void> {

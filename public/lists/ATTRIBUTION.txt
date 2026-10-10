@@ -1,0 +1,16 @@
+EasyList filter data bundled with this extension
+================================================
+
+The file easylist.txt in this folder is the EasyList filter list,
+maintained by the EasyList authors (Fanboy, MonztA, Khrin, Yuki2718
+and contributors).
+
+Source: https://easylist.to / https://github.com/easylist/easylist
+License: GNU General Public License version 3 (GPLv3).
+See https://github.com/easylist/easylist/blob/master/LICENSE for the
+full license text.
+
+This file is used as filter-rule data only. It is parsed as text by the
+extension's locally bundled matching engine and is never executed as code.
+Users can fetch a fresher copy at any time from inside the extension
+(the list auto-refreshes every 4 days and can be updated manually).
