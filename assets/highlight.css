@@ -1,0 +1,29 @@
+/* Overlay styles, injected as content-script CSS by WXT. */
+
+.__highlight-ads-flagged {
+  /* Marker class for sticky-frame queries; the overlay draws the frame. */
+}
+
+.__highlight-ads-overlay {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(255, 0, 0, 0.9);
+  background: rgba(255, 0, 0, 0.35);
+  pointer-events: none;
+  z-index: 2147483647;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.__highlight-ads-badge {
+  color: rgba(255, 255, 255, 0.8);
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+}

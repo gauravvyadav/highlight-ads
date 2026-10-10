@@ -1,0 +1,28 @@
+{
+  "name": "highlight-ads",
+  "description": "See every ad on the page. Ad detector that outlines slots with a bold overlay, not an ad blocker.",
+  "version": "0.1.0",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "wxt",
+    "dev:firefox": "wxt -b firefox",
+    "build": "wxt build",
+    "build:firefox": "wxt build -b firefox",
+    "zip": "wxt zip",
+    "zip:firefox": "wxt zip -b firefox",
+    "compile": "tsc --noEmit",
+    "promo:capture": "node store-assets/capture.mjs",
+    "postinstall": "wxt prepare"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.3.5",
+    "typescript": "^5.9.3",
+    "vite": "^8.1.5",
+    "web-ext": "^10.5.0",
+    "wxt": "^0.21.3"
+  },
+  "dependencies": {
+    "@cliqz/adblocker": "^1.34.0"
+  }
+}

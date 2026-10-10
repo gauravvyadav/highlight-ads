@@ -1,0 +1,297 @@
+/* Popup: white panels split by hairline rules, black pill action. */
+
+:root {
+  --paper: #ffffff;
+  --ink: #17150f;
+  --muted: #7a766a;
+  --line: #e4e4e4;
+  --red: #e8112d;
+  --red-dark: #c00e26;
+  --ok: #1a7a3c;
+  --warn: #b7791f;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  width: 340px;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+#app {
+  padding: 16px 0 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Brand header */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px 14px;
+}
+
+.brand-icon {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 0;
+}
+
+.brand-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.brand-text h1 {
+  margin: 0;
+  font-size: 1.35rem;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  font-weight: 800;
+}
+
+.brand-text p {
+  margin: 4px 0 0;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--muted);
+}
+
+.brand-text p a {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+/* Toggle switch — black */
+.switch {
+  flex: none;
+  cursor: pointer;
+}
+
+.switch input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.switch .track {
+  display: block;
+  width: 46px;
+  height: 26px;
+  border-radius: 0;
+  background: #cfccc1;
+  position: relative;
+  transition: background 0.2s;
+}
+
+.switch .thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 0;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  transition: transform 0.2s;
+}
+
+.switch input:checked + .track {
+  background: var(--ink);
+}
+
+.switch input:checked + .track .thumb {
+  transform: translateX(20px);
+}
+
+.switch input:focus-visible + .track {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/* Section strip: hairline rule bar with micro-labels, full-bleed */
+.strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 7px 16px;
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+}
+
+.chip {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--ok);
+  border-radius: 0;
+  padding: 2px 7px;
+}
+
+.chip.off {
+  color: var(--muted);
+}
+
+.strip .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 0;
+  background: var(--warn);
+}
+
+.strip .dot.ok {
+  background: var(--ok);
+}
+
+/* Hero count panel */
+.hero {
+  padding: 14px 16px 12px;
+}
+
+.micro {
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+}
+
+.hero strong {
+  display: block;
+  margin-top: 2px;
+  min-width: 2ch;
+  text-align: right;
+  font-size: 2.6rem;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Filter-list panel */
+.listsec {
+  padding: 4px 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.statrow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 35px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.statrow strong {
+  min-width: 11ch;
+  text-align: right;
+  font-size: 0.86rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+.hint {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+/* Primary action — black pill */
+#update-list {
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  background: var(--ink);
+  color: #f5f3ed;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  padding: 12px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.05s;
+}
+
+#update-list:hover:not(:disabled) {
+  background: #000;
+}
+
+#update-list:active:not(:disabled) {
+  transform: scale(0.99);
+}
+
+#update-list:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.status {
+  margin: 0;
+  min-height: 1em;
+  font-size: 0.76rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* Color swatches */
+.swatches {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+  padding: 12px 16px;
+}
+
+.swatch {
+  aspect-ratio: 1;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  cursor: pointer;
+  padding: 0;
+}
+
+.swatch:hover {
+  transform: scale(1.06);
+}
+
+.swatch.selected {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.swatch:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.foot {
+  margin: 0;
+  padding: 8px 16px 0;
+  border-top: 1px solid var(--line);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  text-align: center;
+}
+
+.foot a {
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--ink);
+}

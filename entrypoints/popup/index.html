@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Highlight Ads</title>
+    <meta name="manifest.type" content="browser_action" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="brand">
+        <img class="brand-icon" src="/icon/48.png" alt="" aria-hidden="true" />
+        <div class="brand-text">
+          <h1>Highlight Ads</h1>
+          <p>BY <a href="https://gauravlabs.com" target="_blank" rel="noreferrer">GAURAVLABS.COM</a></p>
+        </div>
+        <label class="switch" title="Highlight ads on this browser">
+          <input type="checkbox" id="enabled" checked />
+          <span class="track"><span class="thumb"></span></span>
+        </label>
+      </header>
+
+      <div class="strip">
+        <span>01 / DETECTION</span>
+        <span class="chip" id="state-chip">ON</span>
+      </div>
+
+      <section class="hero">
+        <span class="micro">ADS ON THIS TAB</span>
+        <strong id="count">…</strong>
+      </section>
+
+      <div class="strip">
+        <span>02 / FILTER LIST</span>
+        <span class="dot" id="list-dot" aria-hidden="true"></span>
+      </div>
+
+      <section class="listsec">
+        <div class="statrow">
+          <span class="micro">LAST UPDATED</span>
+          <strong id="list-date">…</strong>
+        </div>
+        <div class="statrow">
+          <span class="micro">ACTIVE RULES</span>
+          <strong id="list-rules">…</strong>
+        </div>
+        <button id="update-list" type="button">UPDATE LIST NOW</button>
+        <p class="status" id="status"></p>
+      </section>
+
+      <div class="strip">
+        <span>03 / HIGHLIGHT COLOR</span>
+      </div>
+
+      <section class="swatches" id="swatches">
+        <button type="button" class="swatch" data-color="red" title="Red" aria-label="Red highlight" style="background-color:#e8112d"></button>
+        <button type="button" class="swatch" data-color="orange" title="Orange" aria-label="Orange highlight" style="background-color:#f97316"></button>
+        <button type="button" class="swatch" data-color="amber" title="Amber" aria-label="Amber highlight" style="background-color:#d9a400"></button>
+        <button type="button" class="swatch" data-color="green" title="Green" aria-label="Green highlight" style="background-color:#16a34a"></button>
+        <button type="button" class="swatch" data-color="blue" title="Blue" aria-label="Blue highlight" style="background-color:#2563eb"></button>
+        <button type="button" class="swatch" data-color="purple" title="Purple" aria-label="Purple highlight" style="background-color:#9333ea"></button>
+      </section>
+
+      <footer class="foot">POWERED BY <a href="https://easylist.to" target="_blank" rel="noreferrer">EASYLIST</a></footer>
+    </div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>
