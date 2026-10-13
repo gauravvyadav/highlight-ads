@@ -1,11 +1,28 @@
-![Highlight Ads Detector](./banner.png)
+<p align="center">
+  <img src="./banner.png" alt="Highlight Ads Detector" />
+</p>
 
-# Highlight Ads Detector
+<h1 align="center">Highlight Ads Detector</h1>
 
-See every ad on the page. Highlights ad slots with a bold overlay and a large
-AD marker. Not an ad blocker: it never blocks, hides, or removes ads.
+<p align="center">
+  <b>See every ad on the page. Highlights ad slots with a bold overlay and a large AD marker. Not an ad blocker: it never blocks, hides, or removes ads.</b>
+</p>
 
-By [gauravlabs.com](https://gauravlabs.com).
+<p align="center">
+  <a href="https://chromewebstore.google.com/detail/highlight-ads-detector/mmhkcokmkjplkmpmhjkjpellgkpmolhn" style="text-decoration: none;">
+    <img src="assets/chrome-webstore.png" height="40" alt="Chrome Web Store" />
+  </a>
+  &nbsp;
+  <a href="https://microsoftedge.microsoft.com/addons/detail/hcohmebafmbfolebpcnahicadacpienb" style="text-decoration: none;">
+    <img src="assets/English_Get it from Microsoft Edge.png" height="40" alt="Edge Addons" />
+  </a>
+</p>
+
+<p align="center">
+  By <a href="https://gauravlabs.com">gauravlabs.com</a>
+</p>
+
+---
 
 ## Features
 
