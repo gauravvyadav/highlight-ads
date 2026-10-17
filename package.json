@@ -22,7 +22,13 @@
     "web-ext": "^10.5.0",
     "wxt": "^0.21.3"
   },
+  "overrides": {
+    "shell-quote": "^1.12.0"
+  },
   "dependencies": {
-    "@cliqz/adblocker": "^1.34.0"
+    "@ghostery/adblocker": "^2.20.1"
+  },
+  "allowScripts": {
+    "fsevents@2.3.3": true
   }
 }

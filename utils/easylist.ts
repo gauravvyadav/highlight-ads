@@ -1,5 +1,5 @@
 // EasyList constants and the content↔background classify protocol.
-// Full matching runs in the background via @cliqz/adblocker.
+// Full matching runs in the background via @ghostery/adblocker.
 
 export const EASYLIST_URL = 'https://easylist.to/easylist/easylist.txt';
 export const EASYLIST_CACHE_KEY = 'highlightAdsEasyList';
@@ -8,9 +8,9 @@ export const EASYLIST_TTL_MS = 4 * 24 * 60 * 60 * 1000;
 // Safety cap per classify batch.
 export const MAX_BATCH_URLS = 200;
 
-// Adblock Plus request types we classify.
+// Request types we classify, using the engine's webRequest vocabulary.
 export type AdRequestType =
-  | 'subdocument'
+  | 'sub_frame'
   | 'script'
   | 'image'
   | 'media'
@@ -39,11 +39,11 @@ export interface EngineStatus {
   ruleCount?: number;
 }
 
-// Element tag → ABP request type.
+// Element tag → request type.
 export function requestTypeForTag(tag: string): AdRequestType {
   switch (tag) {
     case 'IFRAME':
-      return 'subdocument';
+      return 'sub_frame';
     case 'SCRIPT':
       return 'script';
     case 'IMG':
