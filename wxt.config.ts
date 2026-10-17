@@ -11,5 +11,17 @@ export default defineConfig({
     action: {
       default_title: 'Highlight Ads',
     },
+    // MAIN-world creator hook (stack analysis, mirrors Chromium's AdTracker).
+    // WXT only emits ISOLATED content scripts, so this entry is declared
+    // manually; the file ships verbatim from public/.
+    content_scripts: [
+      {
+        matches: ['<all_urls>'],
+        js: ['had-creator-hook.js'],
+        run_at: 'document_start',
+        all_frames: true,
+        world: 'MAIN',
+      },
+    ],
   },
 });

@@ -1,5 +1,4 @@
-// Bundled pattern fallback for offline use (background runs full EasyList).
-// Covers URL matching, ad-script creators, and sticky frames.
+// Offline pattern fallback (background runs full EasyList).
 
 export type AdReason =
   | 'MatchedBlockingRule'
@@ -8,11 +7,12 @@ export type AdReason =
   | 'DemoParam'
   | 'AdMarker'
   | 'AdLabel'
-  | 'AdSlotSize';
+  | 'AdSlotSize'
+  | 'NativeAdWidget';
 
 export const DEMO_PARAM = 'ad_filterlist_demo_param=1';
 
-// Condensed heuristic subset; bundled so detection works offline.
+// Mirrored as AD_RE in public/had-creator-hook.js — keep in sync (list CDN hosts explicitly; substring match).
 const BUNDLED_PATTERNS: string[] = [
   'doubleclick.net',
   'googlesyndication.com',
@@ -23,7 +23,9 @@ const BUNDLED_PATTERNS: string[] = [
   'criteo.com',
   'criteo.net',
   'outbrain.com',
+  'outbrainimg.com',
   'taboola.com',
+  'taboolasyndication.com',
   'moatads.com',
   'adsrvr.org',
   'adnxs.com',
@@ -67,8 +69,7 @@ export function classifyUrl(rawUrl: string | null | undefined): AdMatch {
   if (!url || url.startsWith('data:') || url.startsWith('blob:')) {
     return { isAd: false };
   }
-  // Manual testing hook documented by Chrome: any URL carrying this query
-  // param is treated as ad-related.
+  // Chrome's manual-testing hook: URLs with this param count as ads.
   if (url.includes(DEMO_PARAM)) {
     return { isAd: true, reason: 'DemoParam', pattern: DEMO_PARAM };
   }
@@ -81,7 +82,6 @@ export function classifyUrl(rawUrl: string | null | undefined): AdMatch {
   return { isAd: false };
 }
 
-// True when the current frame URL carries the demo param.
 export function currentFrameHasDemoParam(href: string): boolean {
   try {
     return href.includes(DEMO_PARAM);
