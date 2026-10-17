@@ -6,7 +6,8 @@ export type HighlightColorId =
   | 'amber'
   | 'green'
   | 'blue'
-  | 'purple';
+  | 'purple'
+  | 'theme';
 
 export interface HighlightColor {
   id: HighlightColorId;
@@ -21,6 +22,7 @@ export const HIGHLIGHT_COLORS: HighlightColor[] = [
   { id: 'green', label: 'Green', hex: '#16a34a' },
   { id: 'blue', label: 'Blue', hex: '#2563eb' },
   { id: 'purple', label: 'Purple', hex: '#9333ea' },
+  { id: 'theme', label: 'Theme (White / Black)', hex: '#ffffff' },
 ];
 
 export function colorHex(id: HighlightColorId | undefined): string {

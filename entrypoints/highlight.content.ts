@@ -167,6 +167,15 @@ function boot(): void {
     window.visualViewport.addEventListener('resize', refreshOverlays);
     window.visualViewport.addEventListener('scroll', onScrollCapture);
   }
+  if (typeof window !== 'undefined' && window.matchMedia) {
+    window
+      .matchMedia('(prefers-color-scheme: dark)')
+      .addEventListener('change', () => {
+        if (state.settings.color === 'theme') {
+          recolorAllOverlays();
+        }
+      });
+  }
 }
 
 let scrollRafId: number | null = null;
@@ -957,16 +966,81 @@ function flag(rawEl: Element, reason: AdReason, detail?: string): void {
   resizeObserver?.observe(el);
 }
 
+function isPageDark(): boolean {
+  try {
+    const html = document.documentElement;
+    const body = document.body;
+    const themeAttr = (
+      html.getAttribute('data-theme') ||
+      html.getAttribute('theme') ||
+      body?.getAttribute('data-theme') ||
+      ''
+    ).toLowerCase();
+    if (themeAttr === 'dark') return true;
+    if (themeAttr === 'light') return false;
+    if (
+      html.classList.contains('dark') ||
+      html.classList.contains('dark-mode') ||
+      body?.classList.contains('dark') ||
+      body?.classList.contains('dark-mode')
+    ) {
+      return true;
+    }
+    const target = body ?? html;
+    if (target) {
+      const bg = window.getComputedStyle(target).backgroundColor;
+      const rgb = bg.match(/\d+/g);
+      if (rgb && rgb.length >= 3) {
+        const r = Number(rgb[0]);
+        const g = Number(rgb[1]);
+        const b = Number(rgb[2]);
+        const a = rgb[3] !== undefined ? Number(rgb[3]) : 1;
+        if (a > 0.1) {
+          const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+          return lum < 128;
+        }
+      }
+    }
+  } catch {
+    // Ignore error
+  }
+  return window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false;
+}
+
 function applyOverlayTheme(
   overlay: HTMLDivElement,
   badge: HTMLElement | null,
 ): void {
-  const hex = colorHex(state.settings.color);
-  overlay.style.borderColor = hexToRgba(hex, 0.9);
-  overlay.style.backgroundColor = hexToRgba(hex, 0.35);
-  if (badge) {
-    badge.style.color = 'rgba(255, 255, 255, 0.85)';
-    badge.style.textShadow = 'none';
+  if (state.settings.color === 'theme') {
+    const dark = isPageDark();
+    if (dark) {
+      // Dark website -> 100% solid black overlay (hides ad completely behind it)
+      overlay.style.backgroundColor = '#000000';
+      overlay.style.opacity = '1';
+      overlay.style.borderColor = 'rgba(255, 255, 255, 0.85)';
+      if (badge) {
+        badge.style.color = '#ffffff';
+        badge.style.textShadow = 'none';
+      }
+    } else {
+      // Light website -> 100% solid white overlay (hides ad completely behind it)
+      overlay.style.backgroundColor = '#ffffff';
+      overlay.style.opacity = '1';
+      overlay.style.borderColor = 'rgba(0, 0, 0, 0.85)';
+      if (badge) {
+        badge.style.color = '#000000';
+        badge.style.textShadow = 'none';
+      }
+    }
+  } else {
+    const hex = colorHex(state.settings.color);
+    overlay.style.borderColor = hexToRgba(hex, 0.9);
+    overlay.style.backgroundColor = hexToRgba(hex, 0.35);
+    overlay.style.opacity = '1';
+    if (badge) {
+      badge.style.color = 'rgba(255, 255, 255, 0.85)';
+      badge.style.textShadow = 'none';
+    }
   }
 }
 
