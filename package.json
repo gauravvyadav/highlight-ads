@@ -1,7 +1,7 @@
 {
   "name": "highlight-ads",
   "description": "See every ad on the page. Ad detector that outlines slots with a bold overlay, not an ad blocker.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "license": "MIT",
   "type": "module",
   "scripts": {

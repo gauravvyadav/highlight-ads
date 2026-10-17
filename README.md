@@ -18,10 +18,6 @@
   </a>
 </p>
 
-<p align="center">
-  By <a href="https://gauravlabs.com">gauravlabs.com</a>
-</p>
-
 ---
 
 ## Features
@@ -33,11 +29,21 @@
   script runs are flagged (mirrors Chromium AdTracker stack analysis), and
   subframes that identify as ads report upward so the frame gets flagged
   (mirrors Chromium's sticky frame classification)
-- Six highlight colors
+- Seven highlight colors: red, orange, amber, green, blue, purple, plus an adaptive theme overlay (100% solid white on light websites with black text, 100% solid black on dark websites with white text that hides ads behind the color)
 - Website exclusion: 1-click button to exclude any website from ad highlighting, with an instant "Remove from Exclude" action when revisiting that site
 - Stays glued to sticky banners while scrolling; works on single-page sites
 - Offline fallback with bundled patterns when the list can't be reached
 - Detects publisher-labeled slots, ad markers, and standard IAB-size slots
+
+## What's New in v0.2.0
+
+- **Adaptive Theme Highlight Color**: New 7th swatch automatically adapts to the website's theme. Completely covers the ad slot with 100% opaque solid white on light sites and solid black on dark sites, with bold, high-contrast opposite-colored "AD" lettering.
+- **Website Exclusion & Pause**: 1-click action in the popup to pause ad highlighting on specific websites, with instant status display and one-click resumption.
+- **Native Ad Widget Detection**: Flags Taboola, Outbrain, and sponsored native widgets through main-world script creation stack tracking and upward subframe classification.
+- **Performance & Latency Overhaul**:
+  - Eliminated popup display delay through parallel tab/storage queries and instant badge text caching.
+  - Eliminated webpage lag through debounced rescan passes, scoped mutation filtering that ignores extension overlays, and `requestAnimationFrame`-throttled scroll capture.
+- **Engine Modernization**: Upgraded to `@ghostery/adblocker` with latest `tldts` domain extraction.
 
 ## Install
 
@@ -78,7 +84,7 @@ npm run dev
   in `chrome.storage.local`, validates payloads before parsing, and answers
   batched classification requests.
 - `entrypoints/popup/` — toggle, current website exclusion button, live count,
-  list status, manual list update, and 6-color picker.
+  list status, manual list update, and 7-color picker.
 - `utils/` — settings protocol, bundled fallback patterns, EasyList helpers.
 - `store-assets/` — icons, promo artwork sources (`promo-page/`), and the
   store listing copy (`listing.txt`).
