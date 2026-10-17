@@ -148,6 +148,12 @@ body {
   color: var(--muted);
 }
 
+.chip.warn {
+  color: #b45309;
+  border-color: #fcd34d;
+  background: #fffbeb;
+}
+
 .strip .dot {
   width: 8px;
   height: 8px;
@@ -241,13 +247,6 @@ body {
   cursor: wait;
 }
 
-.status {
-  margin: 0;
-  min-height: 1em;
-  font-size: 0.76rem;
-  color: var(--muted);
-  text-align: center;
-}
 
 /* Color swatches */
 .swatches {
@@ -277,6 +276,90 @@ body {
 .swatch:focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 2px;
+}
+
+/* Bottom Current site panel */
+.strip-site .chip {
+  max-width: 170px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-transform: none;
+}
+
+.site-panel {
+  padding: 10px 16px 12px;
+}
+
+.site-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid var(--ink);
+  border-radius: 0;
+  background: #ffffff;
+  color: var(--ink);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  padding: 12px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s, transform 0.05s;
+}
+
+.site-btn .btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.site-btn:hover:not(:disabled) {
+  background: #f5f3ed;
+}
+
+.site-btn:active:not(:disabled) {
+  transform: scale(0.99);
+}
+
+.site-btn.site-btn-paused {
+  background: var(--ink);
+  color: #ffffff;
+}
+
+.site-btn.site-btn-paused:hover:not(:disabled) {
+  background: #000000;
+  border-color: #000000;
+  color: #ffffff;
+}
+
+.site-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  border-color: var(--line);
+}
+
+/* Inactive black and white mode when current website is excluded */
+#app.site-is-excluded .brand,
+#app.site-is-excluded .hero,
+#app.site-is-excluded .listsec,
+#app.site-is-excluded .swatches,
+#app.site-is-excluded .strip:not(.strip-site) {
+  filter: grayscale(100%);
+  opacity: 0.4;
+  pointer-events: none;
+  transition: filter 0.2s ease, opacity 0.2s ease;
+}
+
+#app.site-is-excluded .strip.strip-site,
+#app.site-is-excluded .site-panel,
+#app.site-is-excluded .foot {
+  filter: none;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .foot {

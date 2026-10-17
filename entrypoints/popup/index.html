@@ -27,7 +27,7 @@
 
       <section class="hero">
         <span class="micro">ADS ON THIS TAB</span>
-        <strong id="count">…</strong>
+        <strong id="count">0</strong>
       </section>
 
       <div class="strip">
@@ -38,14 +38,13 @@
       <section class="listsec">
         <div class="statrow">
           <span class="micro">LAST UPDATED</span>
-          <strong id="list-date">…</strong>
+          <strong id="list-date">—</strong>
         </div>
         <div class="statrow">
           <span class="micro">ACTIVE RULES</span>
-          <strong id="list-rules">…</strong>
+          <strong id="list-rules">—</strong>
         </div>
         <button id="update-list" type="button">UPDATE LIST NOW</button>
-        <p class="status" id="status"></p>
       </section>
 
       <div class="strip">
@@ -53,12 +52,24 @@
       </div>
 
       <section class="swatches" id="swatches">
-        <button type="button" class="swatch" data-color="red" title="Red" aria-label="Red highlight" style="background-color:#e8112d"></button>
+        <button type="button" class="swatch selected" data-color="red" title="Red" aria-label="Red highlight" style="background-color:#e8112d"></button>
         <button type="button" class="swatch" data-color="orange" title="Orange" aria-label="Orange highlight" style="background-color:#f97316"></button>
         <button type="button" class="swatch" data-color="amber" title="Amber" aria-label="Amber highlight" style="background-color:#d9a400"></button>
         <button type="button" class="swatch" data-color="green" title="Green" aria-label="Green highlight" style="background-color:#16a34a"></button>
         <button type="button" class="swatch" data-color="blue" title="Blue" aria-label="Blue highlight" style="background-color:#2563eb"></button>
         <button type="button" class="swatch" data-color="purple" title="Purple" aria-label="Purple highlight" style="background-color:#9333ea"></button>
+      </section>
+
+      <div class="strip strip-site">
+        <span>04 / CURRENT SITE</span>
+        <span class="chip" id="site-chip">—</span>
+      </div>
+
+      <section class="site-panel" id="site-panel">
+        <button type="button" class="site-btn" id="site-exclude-btn">
+          <span class="btn-icon" id="site-btn-icon" aria-hidden="true"></span>
+          <span id="site-btn-text">PAUSE ON THIS SITE</span>
+        </button>
       </section>
 
       <footer class="foot">POWERED BY <a href="https://easylist.to" target="_blank" rel="noreferrer">EASYLIST</a></footer>

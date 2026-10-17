@@ -27,9 +27,14 @@
 ## Features
 
 - Automatic detection powered by the community-maintained EasyList filter set,
-  refreshed every 4 days (manual refresh included)
+  refreshed every 4 days (manual refresh included) — same list family behind
+  Chrome's own ad tagging (a condensed EasyList)
+- Catches Taboola/Outbrain-style native widgets: nodes inserted while an ad
+  script runs are flagged (mirrors Chromium AdTracker stack analysis), and
+  subframes that identify as ads report upward so the frame gets flagged
+  (mirrors Chromium's sticky frame classification)
 - Six highlight colors
-- Live ad count on the toolbar badge and in the popup
+- Website exclusion: 1-click button to exclude any website from ad highlighting, with an instant "Remove from Exclude" action when revisiting that site
 - Stays glued to sticky banners while scrolling; works on single-page sites
 - Offline fallback with bundled patterns when the list can't be reached
 - Detects publisher-labeled slots, ad markers, and standard IAB-size slots
@@ -69,11 +74,11 @@ npm run dev
   (frames, media, labeled containers, standard-size iframes), draws
   fixed-position overlays, and reports counts.
 - `entrypoints/background.ts` — runs the EasyList engine
-  ([@cliqz/adblocker](https://github.com/ghostery/adblocker)), caches the list
+  ([@ghostery/adblocker](https://github.com/ghostery/adblocker)), caches the list
   in `chrome.storage.local`, validates payloads before parsing, and answers
   batched classification requests.
-- `entrypoints/popup/` — toggle, live count, list status, manual list update,
-  and the 6-color picker.
+- `entrypoints/popup/` — toggle, current website exclusion button, live count,
+  list status, manual list update, and 6-color picker.
 - `utils/` — settings protocol, bundled fallback patterns, EasyList helpers.
 - `store-assets/` — icons, promo artwork sources (`promo-page/`), and the
   store listing copy (`listing.txt`).
@@ -90,7 +95,7 @@ network request is the periodic download of the public EasyList text file.
   [easylist.to](https://easylist.to). EasyList is licensed under the GPLv3;
   see `public/lists/ATTRIBUTION.txt` and the
   [easylist repository](https://github.com/easylist/easylist) for details.
-- This extension bundles [@cliqz/adblocker](https://github.com/ghostery/adblocker)
+- This extension bundles [@ghostery/adblocker](https://github.com/ghostery/adblocker)
   (Mozilla Public License 2.0) to match filter rules locally.
 
 ## License
