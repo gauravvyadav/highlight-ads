@@ -1,9 +1,12 @@
 // Background worker: settings, per-tab counts, badge, EasyList engine.
 // Answers batched URL classification for content scripts.
 // Observes only — never blocks traffic; the list is parsed data, never executed.
-import { FiltersEngine, Request } from '@cliqz/adblocker';
+import { FiltersEngine, Request } from '@ghostery/adblocker';
 import {
   DEFAULT_SETTINGS,
+  ENGINE_META_KEY,
+  SETTINGS_KEY,
+  isSiteExcluded,
   type ClassifyResponse,
   type HighlightSettings,
   type RuntimeMsg,
@@ -18,7 +21,6 @@ import {
   type EngineStatus,
 } from '@/utils/easylist';
 
-const SETTINGS_KEY = 'highlightAdsSettings';
 const tabCounts = new Map<number, number>();
 // Per-frame counts, summed per tab.
 const frameCounts = new Map<string, number>();
@@ -30,6 +32,7 @@ const BADGE_DEBOUNCE_MS = 500;
 
 export default defineBackground(() => {
   void ensureDefaults();
+  void initEngineMeta();
   void ensureEngine();
 
   chrome.runtime.onInstalled.addListener(() => {
@@ -48,13 +51,17 @@ export default defineBackground(() => {
       if (tabId !== undefined) {
         // Sum per-frame counts so frames can't overwrite each other.
         frameCounts.set(`${tabId}:${sender.frameId ?? 0}`, msg.count);
+        const total = tabTotal(tabId);
+        const peak = Math.max(total, peakCounts.get(tabId) ?? 0);
+        peakCounts.set(tabId, peak);
+        tabCounts.set(tabId, peak);
         scheduleBadge(tabId);
       }
       return;
     }
     if (msg.type === 'GET_AD_COUNT') {
-      // Popup has no tab context — resolve via the active tab.
-      void resolveActiveCount().then((count) => sendResponse({ count }));
+      // Resolve immediately using provided tabId or active tab.
+      void resolveActiveCount(msg.tabId).then((count) => sendResponse({ count }));
       return true;
     }
     if (msg.type === 'CLASSIFY_URLS') {
@@ -127,7 +134,7 @@ async function getSettings(): Promise<HighlightSettings> {
   return { ...DEFAULT_SETTINGS, ...(raw?.[SETTINGS_KEY] ?? {}) };
 }
 
-// Push settings to every tab's content scripts.
+// Push settings to every tab's content scripts and refresh badges.
 async function broadcastSettings(
   settings: HighlightSettings,
 ): Promise<void> {
@@ -143,6 +150,8 @@ async function broadcastSettings(
       } catch {
         // No content script yet.
       }
+      const count = tabCounts.get(t.id) ?? 0;
+      void updateBadge(t.id, count);
     }),
   );
 }
@@ -174,7 +183,16 @@ function scheduleBadge(tabId: number): void {
 async function updateBadge(tabId: number, count: number): Promise<void> {
   try {
     const settings = await getSettings();
-    const text = !settings.enabled || count <= 0 ? '' : String(count);
+    let isExcluded = false;
+    try {
+      const tab = await chrome.tabs.get(tabId);
+      if (tab?.url) {
+        isExcluded = isSiteExcluded(tab.url, settings.excludedSites);
+      }
+    } catch {
+      // Tab may be gone.
+    }
+    const text = !settings.enabled || isExcluded || count <= 0 ? '' : String(count);
     if (lastBadgeText.get(tabId) === text) return;
     lastBadgeText.set(tabId, text);
     await chrome.action.setBadgeText({ tabId, text });
@@ -187,19 +205,62 @@ async function updateBadge(tabId: number, count: number): Promise<void> {
   }
 }
 
-async function resolveActiveCount(): Promise<number> {
-  const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-  const tabId = tabs[0]?.id;
+async function resolveActiveCount(requestedTabId?: number): Promise<number> {
+  let tabId = requestedTabId;
+  let tabUrl: string | undefined;
+
+  if (tabId === undefined) {
+    const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+    const tab = tabs[0];
+    tabId = tab?.id;
+    tabUrl = tab?.url;
+  } else {
+    try {
+      const tab = await chrome.tabs.get(tabId);
+      tabUrl = tab?.url;
+    } catch {
+      // Tab may be gone.
+    }
+  }
+
   if (tabId === undefined) return 0;
+  const settings = await getSettings();
+  if (tabUrl && isSiteExcluded(tabUrl, settings.excludedSites)) {
+    return 0;
+  }
+
+  // Fast path: if already known in memory, return immediately!
+  const known = tabCounts.get(tabId) ?? tabTotal(tabId);
+  if (known > 0) {
+    return known;
+  }
+
   try {
-    const res = (await chrome.tabs.sendMessage(tabId, {
-      type: 'GET_AD_COUNT',
-    } satisfies RuntimeMsg)) as { count?: number } | undefined;
+    const res = (await Promise.race([
+      chrome.tabs.sendMessage(tabId, {
+        type: 'GET_AD_COUNT',
+      } satisfies RuntimeMsg),
+      new Promise<null>((r) => setTimeout(() => r(null), 150)),
+    ])) as { count?: number; isExcluded?: boolean } | null | undefined;
+
+    if (res?.isExcluded) return 0;
     const count = res?.count ?? tabCounts.get(tabId) ?? 0;
     tabCounts.set(tabId, count);
     return count;
   } catch {
     return tabCounts.get(tabId) ?? 0;
+  }
+}
+
+async function initEngineMeta(): Promise<void> {
+  try {
+    const raw = await chrome.storage.local.get(ENGINE_META_KEY);
+    const meta = raw?.[ENGINE_META_KEY] as Omit<EngineStatus, 'ready'> | undefined;
+    if (meta?.updatedAt) {
+      engineMeta = meta;
+    }
+  } catch {
+    // Storage unavailable.
   }
 }
 
@@ -293,9 +354,12 @@ function bundledDate(text: string): number {
 }
 
 async function setEngine(text: string, fetchedAt: string): Promise<void> {
-  const parsed = await FiltersEngine.parse(text);
+  const ruleCount = countCandidateRules(text);
+  engineMeta = { updatedAt: fetchedAt, ruleCount };
+  void chrome.storage.local.set({ [ENGINE_META_KEY]: engineMeta });
+  // `debug` keeps each filter's raw line so the UI can show the matched rule.
+  const parsed = await FiltersEngine.parse(text, { debug: true });
   engine = parsed;
-  engineMeta = { updatedAt: fetchedAt, ruleCount: countCandidateRules(text) };
 }
 
 // Reject non-EasyList payloads before caching or parsing.
@@ -355,6 +419,22 @@ async function forceUpdateList(): Promise<UpdateListResponse> {
 }
 
 async function getEngineStatus(): Promise<EngineStatus> {
+  if (!engine && !enginePromise) {
+    void ensureEngine();
+  }
+  if (engineMeta.updatedAt) {
+    return { ready: engine !== null, ...engineMeta };
+  }
+  try {
+    const raw = await chrome.storage.local.get(ENGINE_META_KEY);
+    const meta = raw?.[ENGINE_META_KEY] as Omit<EngineStatus, 'ready'> | undefined;
+    if (meta?.updatedAt) {
+      engineMeta = meta;
+      return { ready: engine !== null, ...meta };
+    }
+  } catch {
+    // Storage unavailable.
+  }
   await ensureEngine().catch(() => {});
   return { ready: engine !== null, ...engineMeta };
 }
